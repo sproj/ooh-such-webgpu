@@ -1,11 +1,11 @@
 import styles from "./page.module.css";
-import WebGPUCanvas from '@/components/WebGPUCanvas';
+import Canvas3D from '@/components/Canvas3D';
 
 export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <WebGPUCanvas />
+        <Canvas3D />
       </main>
     </div>
   );

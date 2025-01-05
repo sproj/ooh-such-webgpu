@@ -1,13 +1,14 @@
+import { WebGPUErrorType } from "@/errors/WebGPUError";
+import { WebGPUError } from "@/errors/WebGPUError";
 import { RGB } from "@/utils/rgb";
 
 export const initializeWebGPU = async (
-    canvasRef:  React.RefObject<HTMLCanvasElement | null>,
+    canvasRef: React.RefObject<HTMLCanvasElement | null>,
     shaderCode: string,
-    clearValue: RGB 
+    clearValue: RGB
 ) => {
     if (!navigator.gpu) {
-        console.error('WebGPU not supported on this browser.');
-        return;
+        throw new WebGPUError(WebGPUErrorType.NotSupported)
     }
 
 
@@ -17,16 +18,21 @@ export const initializeWebGPU = async (
     }
 
     // get gpu adapter and device
-    const adapter = await navigator.gpu.requestAdapter();
-    if (!adapter) {
-        console.error('WebGPu: Failed to get GPU adapter.');
-        return;
-    }
+    const adapter = await navigator.gpu.requestAdapter()
+        .then(a => { if (!a) { throw new WebGPUError(WebGPUErrorType.NoAdapter) } else { return a } })
+        .catch(e => { throw new WebGPUError(WebGPUErrorType.NoAdapter, e) })
 
     const device = await adapter.requestDevice();
+    if (!device) {
+        throw new WebGPUError(WebGPUErrorType.NoDevice);
+    }
 
     // configure canvas content
-    const context = canvas.getContext('webgpu') as GPUCanvasContext;
+    const context = canvas.getContext('webgpu');
+    if (!context) {
+        throw new WebGPUError(WebGPUErrorType.NoContext);
+    }
+
     const format = navigator.gpu.getPreferredCanvasFormat();
     context.configure({
         device,
