@@ -27,7 +27,7 @@ const Canvas3D = () => {
                 await renderer.initializeEnvironment()
                 await renderer.preparePipeline({ shaderCode: flatRedTriangleShaderCode });
                 await renderer.draw();
-                // await initializeWebGPU(canvasRef, flatRedTriangleShaderCode, rgbBlack);
+
                 setCanvasMode(CanvasMode.WebGPU);
             } catch (e) {
                 if (e instanceof WebGPUError) {
