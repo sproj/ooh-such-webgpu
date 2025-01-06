@@ -1,5 +1,7 @@
 export enum WebGLErrorType {
     NotSupported = 'WebGLNotSupported',
+    InvalidShaderSource = 'InvalidShaderSource',
+    NoCanvas = 'NoCanvasProvided',
 }
 export class WebGLError extends Error {
     type: WebGLErrorType;
@@ -10,6 +12,8 @@ export class WebGLError extends Error {
 
     private static messages: Record<WebGLErrorType, string> = {
         [WebGLErrorType.NotSupported]: 'WebGL is not supported in this browser',
+        [WebGLErrorType.InvalidShaderSource]: 'WebGL requires at least one vertex and one fragment shader',
+        [WebGLErrorType.NoCanvas]: 'Provided canvas is null or undefined',
     };
 
     constructor(errorType: WebGLErrorType) {

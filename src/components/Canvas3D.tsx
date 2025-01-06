@@ -2,11 +2,11 @@
 
 import { WebGLError } from '@/errors/WebGLError';
 import { WebGPUError } from '@/errors/WebGPUError';
-import { rgbBlack } from '@/utils/rgb';
-import { initializeWebGL } from '@/webgl/initializeWebGL';
+import WebGlRenderer from '@/lib/ThreeDPRenderer/WebGLRenderer';
+import WebGPURenderer from '@/lib/ThreeDPRenderer/WebGPURenderer';
+// import { rgbBlack } from '@/utils/rgb';
 import { flat_red_fragment_source } from '@/webgl/shaders/generic/fragment/flat_red';
 import { vec4position_shader_source } from '@/webgl/shaders/generic/vertex/vec4_pos';
-import { initializeWebGPU } from '@/webgpu/initializeWebGPU';
 import { flatRedTriangleShaderCode } from '@/webgpu/shaders/flatRedTriangle';
 import { useEffect, useRef, useState } from 'react';
 
@@ -23,7 +23,11 @@ const Canvas3D = () => {
     useEffect(() => {
         const initCanvas = async () => {
             try {
-                await initializeWebGPU(canvasRef, flatRedTriangleShaderCode, rgbBlack);
+                const renderer = new WebGPURenderer(canvasRef);
+                await renderer.initializeEnvironment()
+                await renderer.preparePipeline({ shaderCode: flatRedTriangleShaderCode });
+                await renderer.draw();
+                // await initializeWebGPU(canvasRef, flatRedTriangleShaderCode, rgbBlack);
                 setCanvasMode(CanvasMode.WebGPU);
             } catch (e) {
                 if (e instanceof WebGPUError) {
@@ -39,7 +43,16 @@ const Canvas3D = () => {
             }
 
             try {
-                await initializeWebGL(canvasRef, vec4position_shader_source, flat_red_fragment_source);
+                const renderer = new WebGlRenderer(canvasRef);
+
+                await renderer.initializeEnvironment();
+                await renderer.preparePipeline({
+                    vertexShaderSources: [vec4position_shader_source],
+                    fragmentShaderSources: [flat_red_fragment_source]
+                });
+                await renderer.draw();
+
+                // await initializeWebGL(canvasRef, vec4position_shader_source, flat_red_fragment_source);
                 setCanvasMode(CanvasMode.WebGL);
 
             } catch (e) {
