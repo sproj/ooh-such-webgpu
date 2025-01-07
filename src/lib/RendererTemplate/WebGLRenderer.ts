@@ -47,7 +47,7 @@ class WebGlRenderer extends RendererTemplate {
         await this.draw(scene);
     }
 
-    private async preparePipeline(input: PreparePipelineInput): Promise<void> {
+    protected async preparePipeline(input: PreparePipelineInput): Promise<void> {
         if (!input.vertexShaderSources?.length || !input.fragmentShaderSources?.length) {
             throw new WebGLError(WebGLErrorType.InvalidShaderSource)
         }
@@ -82,7 +82,7 @@ class WebGlRenderer extends RendererTemplate {
     }
 
 
-    private async draw(scene: SceneDefinition): Promise<void> {
+    protected async draw(scene: SceneDefinition): Promise<void> {
         const vertices = scene.vertices;
 
         if (!this.gl) {

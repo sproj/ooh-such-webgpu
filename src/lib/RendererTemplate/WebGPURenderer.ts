@@ -57,7 +57,7 @@ class WebGPURenderer extends RendererTemplate {
         await this.draw(scene);
     }
 
-    async preparePipeline(input: PreparePipelineInput): Promise<void> {
+    protected async preparePipeline(input: PreparePipelineInput): Promise<void> {
         if (!input.shaderCode) {
             throw new WebGPUError(WebGPUErrorType.InvalidShaderSource)
         }
@@ -89,7 +89,7 @@ class WebGPURenderer extends RendererTemplate {
         })
     }
 
-    async draw(scene: SceneDefinition): Promise<void> {
+    protected async draw(scene: SceneDefinition): Promise<void> {
         if (!this.device) {
             throw new Error('Device must be initialized. Call `initializeEnvironment` before calling `draw`');
         }

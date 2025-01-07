@@ -11,10 +11,10 @@ abstract class RendererTemplate {
         this.canvas = canvasRef.current;
     }
     abstract initializeEnvironment(): Promise<void>;
-    abstract preparePipeline(input: PreparePipelineInput): Promise<void>;
-    abstract draw(scene: SceneDefinition): Promise<void>;
-    abstract setCanvas(canvasRef: React.RefObject<HTMLCanvasElement | null>): void
     abstract render(scene: SceneDefinition): Promise<void>;
+    abstract setCanvas(canvasRef: React.RefObject<HTMLCanvasElement | null>): void
+    protected abstract draw(scene: SceneDefinition): Promise<void>;
+    protected abstract preparePipeline(input: PreparePipelineInput): Promise<void>;
 }
 
 export default RendererTemplate;
