@@ -1,9 +1,11 @@
 import { WebGLError, WebGLErrorType } from "@/errors/WebGLError";
-import ThreeDRendererTemplate from "./ThreeDRendererTemplate";
+import RendererTemplate from "@/lib/RendererTemplate/RendererTemplate";
 import { PreparePipelineInput } from "./PreparePipelineInput";
+import { SceneDefinition } from "../SceneDefinition";
+import { rgbBlack } from "@/utils/rgb";
 
-class WebGlRenderer extends ThreeDRendererTemplate {
-    protected canvas: HTMLCanvasElement;
+class WebGlRenderer extends RendererTemplate {
+    protected canvas: HTMLCanvasElement | null = null;
     private gl: WebGLRenderingContext | null = null;
     private program: WebGLProgram | null = null;
 
@@ -13,10 +15,22 @@ class WebGlRenderer extends ThreeDRendererTemplate {
         if (!canvas) {
             throw new WebGLError(WebGLErrorType.NoCanvas)
         }
+        this.setCanvas(canvasRef);
+    }
+
+    setCanvas(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            throw new WebGLError(WebGLErrorType.NoCanvas)
+        }
         this.canvas = canvas;
     }
 
     async initializeEnvironment(): Promise<void> {
+        if (!this.canvas) {
+            throw new WebGLError(WebGLErrorType.NoCanvas)
+        }
+
         const gl = this.canvas.getContext('webgl');
         if (!gl) {
             throw new WebGLError(WebGLErrorType.NotSupported);
@@ -24,7 +38,16 @@ class WebGlRenderer extends ThreeDRendererTemplate {
 
         this.gl = gl;
     }
-    async preparePipeline(input: PreparePipelineInput): Promise<void> {
+
+    async render(scene: SceneDefinition): Promise<void> {
+        await this.preparePipeline({
+            vertexShaderSources: scene.vertexShaderSources,
+            fragmentShaderSources: scene.fragmentShaderSources,
+        });
+        await this.draw(scene);
+    }
+
+    protected async preparePipeline(input: PreparePipelineInput): Promise<void> {
         if (!input.vertexShaderSources?.length || !input.fragmentShaderSources?.length) {
             throw new WebGLError(WebGLErrorType.InvalidShaderSource)
         }
@@ -57,12 +80,10 @@ class WebGlRenderer extends ThreeDRendererTemplate {
 
         this.program = program;
     }
-    async draw(): Promise<void> {
-        const vertices = new Float32Array([
-            0.0, 0.5,
-            -0.5, -0.5,
-            0.5, -0.5,
-        ]);
+
+
+    protected async draw(scene: SceneDefinition): Promise<void> {
+        const vertices = scene.vertices;
 
         if (!this.gl) {
             throw new Error('gl must be initialized. Call `initializeEnvironment` before calling `draw`');
@@ -82,7 +103,8 @@ class WebGlRenderer extends ThreeDRendererTemplate {
         this.gl.enableVertexAttribArray(a_Position);
 
         // Clear canvas and draw
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        const { r, g, b, a} = scene.clearColor || rgbBlack;
+        this.gl.clearColor(r, g, b, a);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
     }
