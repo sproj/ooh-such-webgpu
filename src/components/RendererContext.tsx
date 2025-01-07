@@ -1,16 +1,18 @@
 import React, { createContext, useContext, useRef, useState } from 'react';
-import WebGPURenderer from '@/lib/ThreeDPRenderer/WebGPURenderer';
-import WebGLRenderer from '@/lib/ThreeDPRenderer/WebGLRenderer';
+import WebGPURenderer from '@/lib/RendererTemplate/WebGPURenderer';
+import WebGLRenderer from '@/lib/RendererTemplate/WebGLRenderer';
 import { WebGLError } from '@/errors/WebGLError';
 import { WebGPUError } from '@/errors/WebGPUError';
 
-enum RendererType {
+export enum RendererType {
     WebGPU,
     WebGL,
 }
 
 interface RendererContextValue {
     rendererType: RendererType | null;
+    rendererRef: React.RefObject<WebGPURenderer | WebGLRenderer | null>,
+    initializeRenderer(canvasRef: React.RefObject<HTMLCanvasElement | null>): Promise<void>,
     draw: (params: {
         vertexShaderSources?: string[];
         fragmentShaderSources?: string[];
@@ -21,11 +23,11 @@ interface RendererContextValue {
 const RendererContext = createContext<RendererContextValue | undefined>(undefined);
 
 export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    // const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [rendererType, setRendererType] = useState<RendererType | null>(null);
     const rendererRef = useRef<WebGPURenderer | WebGLRenderer | null>(null);
 
-    const initializeRenderer = async () => {
+    const initializeRenderer = async (canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
         try {
             const webGPURenderer = new WebGPURenderer(canvasRef);
             await webGPURenderer.initializeEnvironment();
@@ -68,14 +70,9 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
-    React.useEffect(() => {
-        initializeRenderer();
-    }, []);
-
     return (
-        <RendererContext.Provider value={{ rendererType, draw }}>
+        <RendererContext.Provider value={{ initializeRenderer, draw, rendererType, rendererRef }}>
             <div style={{ position: 'relative' }}>
-                <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
                 {children}
             </div>
         </RendererContext.Provider>

@@ -1,6 +1,6 @@
 import { PreparePipelineInput } from "./PreparePipelineInput";
 
-abstract class ThreeDRendererTemplate {
+abstract class RendererTemplate {
     protected canvas: HTMLCanvasElement;
 
     constructor(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
@@ -20,4 +20,4 @@ abstract class ThreeDRendererTemplate {
     // }
 }
 
-export default ThreeDRendererTemplate;
+export default RendererTemplate;

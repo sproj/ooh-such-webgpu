@@ -2,12 +2,12 @@
 
 import { WebGLError } from '@/errors/WebGLError';
 import { WebGPUError } from '@/errors/WebGPUError';
-import WebGlRenderer from '@/lib/ThreeDPRenderer/WebGLRenderer';
-import WebGPURenderer from '@/lib/ThreeDPRenderer/WebGPURenderer';
+import WebGlRenderer from '@/lib/RendererTemplate/WebGLRenderer';
+import WebGPURenderer from '@/lib/RendererTemplate/WebGPURenderer';
 // import { rgbBlack } from '@/utils/rgb';
-import { flat_red_fragment_source } from '@/webgl/shaders/generic/fragment/flat_red';
-import { vec4position_shader_source } from '@/webgl/shaders/generic/vertex/vec4_pos';
-import { flatRedTriangleShaderCode } from '@/webgpu/shaders/flatRedTriangle';
+import { flat_red_fragment_source } from '@/lib/webgl/shaders/generic/fragment/flat_red';
+import { vec4position_shader_source } from '@/lib/webgl/shaders/generic/vertex/vec4_pos';
+import { flatRedTriangleShaderCode } from '@/lib/webgpu/shaders/flatRedTriangle';
 import { useEffect, useRef, useState } from 'react';
 
 enum CanvasMode {

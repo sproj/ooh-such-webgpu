@@ -1,8 +1,8 @@
 import { WebGPUError, WebGPUErrorType } from "@/errors/WebGPUError";
-import ThreeDRendererTemplate from "@/lib/ThreeDPRenderer/ThreeDRendererTemplate";
+import RendererTemplate from "@/lib/RendererTemplate/RendererTemplate";
 import { PreparePipelineInput } from "./PreparePipelineInput";
 
-class WebGPURenderer extends ThreeDRendererTemplate {
+class WebGPURenderer extends RendererTemplate {
     protected canvas: HTMLCanvasElement
     private device: GPUDevice | null = null;
     private context: GPUCanvasContext | null = null;
@@ -38,10 +38,6 @@ class WebGPURenderer extends ThreeDRendererTemplate {
         } else {
             this.context = context;
         }
-
-
-
-
     }
 
     async preparePipeline(input: PreparePipelineInput): Promise<void> {

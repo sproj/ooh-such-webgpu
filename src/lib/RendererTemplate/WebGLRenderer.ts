@@ -1,8 +1,8 @@
 import { WebGLError, WebGLErrorType } from "@/errors/WebGLError";
-import ThreeDRendererTemplate from "./ThreeDRendererTemplate";
+import RendererTemplate from "@/lib/RendererTemplate/RendererTemplate";
 import { PreparePipelineInput } from "./PreparePipelineInput";
 
-class WebGlRenderer extends ThreeDRendererTemplate {
+class WebGlRenderer extends RendererTemplate {
     protected canvas: HTMLCanvasElement;
     private gl: WebGLRenderingContext | null = null;
     private program: WebGLProgram | null = null;
@@ -24,6 +24,8 @@ class WebGlRenderer extends ThreeDRendererTemplate {
 
         this.gl = gl;
     }
+
+
     async preparePipeline(input: PreparePipelineInput): Promise<void> {
         if (!input.vertexShaderSources?.length || !input.fragmentShaderSources?.length) {
             throw new WebGLError(WebGLErrorType.InvalidShaderSource)
@@ -57,6 +59,8 @@ class WebGlRenderer extends ThreeDRendererTemplate {
 
         this.program = program;
     }
+
+
     async draw(): Promise<void> {
         const vertices = new Float32Array([
             0.0, 0.5,
