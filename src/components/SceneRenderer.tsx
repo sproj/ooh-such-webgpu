@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useRef } from "react";
-import { useRenderer } from "../RendererContext";
+import { useRenderer } from "@/components/RendererContext";
 import { SceneDefinition } from "@/lib/SceneDefinition";
 
 export interface ThreeDCanvasProps {

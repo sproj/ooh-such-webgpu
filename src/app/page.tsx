@@ -1,6 +1,6 @@
 import { RendererProvider } from "@/components/RendererContext";
 import styles from "./page.module.css";
-import SceneRenderer from "@/components/SceneRenderer/SceneRenderer";
+import SceneRenderer from "@/components/SceneRenderer";
 import { FlatTriangleScene } from "@/scenes/FlatRedTriangle";
 
 export default function Home() {
@@ -8,7 +8,10 @@ export default function Home() {
     <div className={styles.page}>
       <RendererProvider>
         <main className={styles.main}>
-          <SceneRenderer scene={FlatTriangleScene} />
+          <div className={styles.renderer}>
+            <SceneRenderer scene={FlatTriangleScene} />
+          </div>
+          <div className={styles.input}>ddd</div>
         </main>
       </RendererProvider>
     </div>
