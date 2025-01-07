@@ -45,7 +45,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const draw = async (scene: SceneDefinition) => {
         if (!rendererRef.current) {
-            throw new Error('Renderer has not been initialized');
+            throw new Error('Renderer has not been initialized. You must call `initializeRenderer` to have something to `draw`.');
         }
 
         await rendererRef.current.render(scene)
