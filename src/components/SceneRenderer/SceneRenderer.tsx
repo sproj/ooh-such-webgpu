@@ -1,21 +1,26 @@
-import { RendererType, useRenderer } from "../RendererContext";
-import WebGLCanvas from "./WebGLCanvas";
-import WebGPUCanvas from "./WebGPUCanvas";
+"use client"
+import { useEffect, useRef } from "react";
+import { useRenderer } from "../RendererContext";
+import { SceneDefinition } from "@/lib/SceneDefinition";
 
 export interface ThreeDCanvasProps {
     scene: SceneDefinition
 }
 
 const SceneRenderer = ({ scene }: { scene: SceneDefinition }) => {
-    const { rendererType } = useRenderer();
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const { initializeRenderer, draw, rendererType } = useRenderer();
 
-    return rendererType === RendererType.WebGPU ? (
-        <WebGPUCanvas scene={scene} />
-    ) : rendererType === RendererType.WebGL ? (
-        <WebGLCanvas scene={scene} />
-    ) : (
-        <p>Renderer not available</p>
-    );
+    useEffect(() => {
+        const renderScene = async () => {
+            await initializeRenderer(canvasRef);
+            await draw(scene);
+        }
+        renderScene()
+    }, [scene, rendererType]);
+    return (
+        <canvas ref={canvasRef} />
+    )
 };
 
 export default SceneRenderer

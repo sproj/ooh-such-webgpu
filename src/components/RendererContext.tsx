@@ -1,8 +1,9 @@
+"use client"
+
 import React, { createContext, useContext, useRef, useState } from 'react';
 import WebGPURenderer from '@/lib/RendererTemplate/WebGPURenderer';
 import WebGLRenderer from '@/lib/RendererTemplate/WebGLRenderer';
-import { WebGLError } from '@/errors/WebGLError';
-import { WebGPUError } from '@/errors/WebGPUError';
+import { SceneDefinition } from '@/lib/SceneDefinition';
 
 export enum RendererType {
     WebGPU,
@@ -13,17 +14,12 @@ interface RendererContextValue {
     rendererType: RendererType | null;
     rendererRef: React.RefObject<WebGPURenderer | WebGLRenderer | null>,
     initializeRenderer(canvasRef: React.RefObject<HTMLCanvasElement | null>): Promise<void>,
-    draw: (params: {
-        vertexShaderSources?: string[];
-        fragmentShaderSources?: string[];
-        shaderCode?: string;
-    }) => Promise<void>;
+    draw: (scene: SceneDefinition) => Promise<void>;
 }
 
 const RendererContext = createContext<RendererContextValue | undefined>(undefined);
 
 export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [rendererType, setRendererType] = useState<RendererType | null>(null);
     const rendererRef = useRef<WebGPURenderer | WebGLRenderer | null>(null);
 
@@ -47,27 +43,12 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
-    const draw = async (params: {
-        vertexShaderSources?: string[];
-        fragmentShaderSources?: string[];
-        shaderCode?: string;
-    }) => {
+    const draw = async (scene: SceneDefinition) => {
         if (!rendererRef.current) {
             throw new Error('Renderer has not been initialized');
         }
 
-        if (rendererType === RendererType.WebGPU && params.shaderCode) {
-            await (rendererRef.current as WebGPURenderer).preparePipeline({ shaderCode: params.shaderCode });
-            await rendererRef.current.draw();
-        } else if (rendererType === RendererType.WebGL && params.vertexShaderSources && params.fragmentShaderSources) {
-            await (rendererRef.current as WebGLRenderer).preparePipeline({
-                vertexShaderSources: params.vertexShaderSources,
-                fragmentShaderSources: params.fragmentShaderSources,
-            });
-            await rendererRef.current.draw();
-        } else {
-            throw new Error('Invalid parameters for the current renderer');
-        }
+        await rendererRef.current.render(scene)
     };
 
     return (

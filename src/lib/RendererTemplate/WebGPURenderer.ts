@@ -1,9 +1,10 @@
 import { WebGPUError, WebGPUErrorType } from "@/errors/WebGPUError";
 import RendererTemplate from "@/lib/RendererTemplate/RendererTemplate";
 import { PreparePipelineInput } from "./PreparePipelineInput";
+import { SceneDefinition } from "../SceneDefinition";
 
 class WebGPURenderer extends RendererTemplate {
-    protected canvas: HTMLCanvasElement
+    protected canvas: HTMLCanvasElement | null = null;
     private device: GPUDevice | null = null;
     private context: GPUCanvasContext | null = null;
     private pipeline: GPURenderPipeline | null = null;
@@ -14,6 +15,10 @@ class WebGPURenderer extends RendererTemplate {
             throw new WebGPUError(WebGPUErrorType.NotSupported)
         }
 
+        this.setCanvas(canvasRef);
+    }
+
+    setCanvas(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
         const canvas = canvasRef.current;
         if (!canvas) {
             throw new WebGPUError(WebGPUErrorType.NoCanvas)
@@ -22,6 +27,11 @@ class WebGPURenderer extends RendererTemplate {
     }
 
     async initializeEnvironment(): Promise<void> {
+
+        if (!this.canvas) {
+            throw new WebGPUError(WebGPUErrorType.NoCanvas)
+        }
+
         const adapter = await navigator.gpu.requestAdapter()
             .then(a => { if (!a) { throw new WebGPUError(WebGPUErrorType.NoAdapter) } else { return a } })
             .catch(e => { throw new WebGPUError(WebGPUErrorType.NoAdapter, e) })
@@ -38,6 +48,13 @@ class WebGPURenderer extends RendererTemplate {
         } else {
             this.context = context;
         }
+    }
+
+    async render(scene: SceneDefinition): Promise<void> {
+        await this.preparePipeline({
+            shaderCode: scene.shaderCode
+        });
+        await this.draw(scene);
     }
 
     async preparePipeline(input: PreparePipelineInput): Promise<void> {
@@ -72,7 +89,7 @@ class WebGPURenderer extends RendererTemplate {
         })
     }
 
-    async draw() {
+    async draw(scene: SceneDefinition): Promise<void> {
         if (!this.device) {
             throw new Error('Device must be initialized. Call `initializeEnvironment` before calling `draw`');
         }
@@ -88,7 +105,7 @@ class WebGPURenderer extends RendererTemplate {
             colorAttachments: [
                 {
                     view: this.context.getCurrentTexture().createView(),
-                    clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                    clearValue: scene.clearColor || { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
                     loadOp: 'clear',
                     storeOp: 'store',
                 },

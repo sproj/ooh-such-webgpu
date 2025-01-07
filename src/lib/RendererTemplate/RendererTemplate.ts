@@ -1,7 +1,8 @@
+import { SceneDefinition } from "../SceneDefinition";
 import { PreparePipelineInput } from "./PreparePipelineInput";
 
 abstract class RendererTemplate {
-    protected canvas: HTMLCanvasElement;
+    protected canvas: HTMLCanvasElement | null;
 
     constructor(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
         if (!canvasRef.current) {
@@ -11,13 +12,9 @@ abstract class RendererTemplate {
     }
     abstract initializeEnvironment(): Promise<void>;
     abstract preparePipeline(input: PreparePipelineInput): Promise<void>;
-    abstract draw(): Promise<void>;
-
-    // async render(canvasRef: React.RefObject<HTMLCanvasElement | null>): Promise<void> {
-    //     await this.initializeEnvironment(canvasRef);
-    //     await this.preparePipeline(shaderCode: string[]);
-    //     return await this.draw();
-    // }
+    abstract draw(scene: SceneDefinition): Promise<void>;
+    abstract setCanvas(canvasRef: React.RefObject<HTMLCanvasElement | null>): void
+    abstract render(scene: SceneDefinition): Promise<void>;
 }
 
 export default RendererTemplate;
