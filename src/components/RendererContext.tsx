@@ -10,7 +10,7 @@ export enum RendererType {
     WebGL,
 }
 
-interface RendererContextValue {
+export interface RendererContextValue {
     rendererType: RendererType | null;
     rendererRef: React.RefObject<WebGPURenderer | WebGLRenderer | null>,
     initializeRenderer(canvasRef: React.RefObject<HTMLCanvasElement | null>): Promise<void>,
