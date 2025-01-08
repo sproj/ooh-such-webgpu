@@ -2,16 +2,16 @@
 import { useState } from 'react';
 import { useUserInput } from './EditorContext';
 
-export const ShaderEditor = () => {
+export const VertexShaderEditor = () => {
     const [shaderInput, setShaderInput] = useState('');
-    const { setShaderCode } = useUserInput();
+    const { setVertexShaderCode } = useUserInput();
     const handleSubmit = () => {
-        setShaderCode(shaderInput);
+        setVertexShaderCode(shaderInput);
     };
 
     return (
         <div>
-            <h3>Custom Shader Editor</h3>
+            <h3>Vertex Shader Editor</h3>
             <textarea
                 value={shaderInput}
                 onChange={(e) => setShaderInput(e.target.value)}
@@ -24,4 +24,4 @@ export const ShaderEditor = () => {
     );
 };
 
-export default ShaderEditor;
+export default VertexShaderEditor;

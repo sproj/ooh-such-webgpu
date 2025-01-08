@@ -5,7 +5,8 @@ import { FlatTriangleScene } from "@/scenes/FlatRedTriangle";
 import SceneSelector from "@/components/SceneSelector";
 import { UserInputProvider } from "@/components/EditorContext";
 import VertexEditor from "@/components/VertexEditor";
-import ShaderEditor from "@/components/ShaderEditor";
+import VertexShaderEditor from "@/components/VertexShaderEditor";
+import FragmentShaderEditor from "@/components/FragmentShaderEditor";
 
 export default function Home() {
 
@@ -20,7 +21,8 @@ export default function Home() {
             <div className={styles.input}>
               <SceneSelector />
               <VertexEditor />
-              <ShaderEditor />
+              <VertexShaderEditor />
+              <FragmentShaderEditor />
             </div>
           </main>
         </RendererProvider>
