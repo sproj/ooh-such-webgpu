@@ -1,6 +1,7 @@
 import { RGB } from "@/utils/rgb";
 
 export interface SceneDefinition {
+    name?: string
     vertices: Float32Array;
     indices?: Uint16Array;
     shaderCode: string;              // WebGPU
